@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+    container_name: php_container
+    ports:
+      - "80:80"   # Map port 8000 on host to port 80 in container
+    volumes:
+      - ./htdocs:/var/www/html    # Mount local 'php' folder to '/var/www/html'
+    networks:
+      - simply-bearing
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin_container
+    environment:
+      - PMA_HOST=192.168.60.50   # IP address of the remote MySQL server
+      - PMA_PORT=3306          # Port of the remote MySQL server (default is 3306)
+      - PMA_USER=root          # MySQL username (change as needed)
+      - PMA_PASSWORD=your_password   # MySQL password (change as needed)
+    ports:
+      - "8080:80"   # Expose PHPMyAdmin on port 8080
+    depends_on:
+      - php
+    networks:
+      - simply-bearing
+  
+  mysql_db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecommerce
+    ports:
+    - 3306:3306
+
+networks:
+  simply-bearing:
+    driver: bridge
