@@ -5,12 +5,12 @@ services:
     image: nginx:latest
     container_name: nginx_container
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:80"    # HTTP
+      - "443:443"  # HTTPS
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf          # Nginx config
       - ./nginx/certificates:/etc/nginx/certificates      # SSL certificates
-      - ./php:/var/www/html                               # Mount PHP files directly to /var/www/html
+      - ./php/htdocs:/var/www/html/htdocs                              # Mount PHP files
     depends_on:
       - php
     networks:
@@ -20,7 +20,7 @@ services:
     image: php:8.2-fpm
     container_name: php_container
     volumes:
-      - ./php:/var/www/html    # Mount the same PHP files
+      - ./php:/var/www/html                               # Mount PHP files
       - ./php/php-ini-overrides.ini:/usr/local/etc/php/conf.d/php-ini-overrides.ini # Custom PHP config
     networks:
       - app-network
